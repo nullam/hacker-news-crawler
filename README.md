@@ -14,6 +14,7 @@ The application also records API usage in a PostgreSQL database, storing the req
 - **PostgreSQL** – database
 - **Maven** – dependency management
 - **JUnit 5** – automated testing
+- **Springdoc OpenAPI** – API documentation and Swagger UI
 
 ## Features
 
@@ -190,6 +191,25 @@ curl http://localhost:8080/api/news/short-titles
   }
 ]
 ```
+
+## API Documentation
+
+The API documentation is automatically generated using OpenAPI 3 and Springdoc.
+
+Swagger UI provides an interactive interface to explore and test the available REST endpoints.
+
+Once the application is running, access the documentation at:
+
+**Swagger UI:**
+http://localhost:8080/swagger-ui.html
+
+**OpenAPI JSON:**
+http://localhost:8080/v3/api-docs
+
+Through Swagger UI, you can:
+- Explore the available endpoints.
+- Review request and response structures.
+- Execute API requests directly from the browser.
 
 ## Database Usage Logs
 
