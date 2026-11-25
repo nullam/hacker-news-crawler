@@ -5,11 +5,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.ely.hackernews.model.HackerNewsEntry;
+import com.ely.hackernews.scraper.HackerNewsScraper;
 
 public class HackerNewsServiceTest {
-    private final HackerNewsService service = new HackerNewsService();
+    @Mock
+    private HackerNewsScraper scraper;
+
+    private HackerNewsService service;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        service = new HackerNewsService(scraper);
+    }
 
     /**
      * Verifies that titles with more than five words

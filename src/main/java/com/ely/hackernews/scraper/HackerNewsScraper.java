@@ -12,8 +12,11 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class HackerNewsScraper {
-    private static final String HACKER_NEWS_URL = "https//news.ycombinator.com/";
+    private static final String HACKER_NEWS_URL = "https://news.ycombinator.com/";
     private static final int MAX_ENTRIES = 30;
 
     public Document fetchPage() throws IOException {
