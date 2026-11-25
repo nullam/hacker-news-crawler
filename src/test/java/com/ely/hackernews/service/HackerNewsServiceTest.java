@@ -3,16 +3,21 @@ package com.ely.hackernews.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.argThat;
 
 import com.ely.hackernews.model.HackerNewsEntry;
 import com.ely.hackernews.repository.UsageLogRepository;
 import com.ely.hackernews.scraper.HackerNewsScraper;
+import com.ely.hackernews.entity.FilterType;
 
 public class HackerNewsServiceTest {
     @Mock
@@ -20,6 +25,7 @@ public class HackerNewsServiceTest {
 
     private HackerNewsService service;
 
+    @Mock
     private UsageLogRepository usageLogRepository;
 
     @BeforeEach
@@ -68,5 +74,37 @@ public class HackerNewsServiceTest {
         assertEquals(2, result.get(0).rack());
         assertEquals(4, result.get(1).rack());
         assertEquals(1, result.get(2).rack());
+    }
+
+    /**
+     * Verifies that requesting long-title entries records the LONG_TITLES filter
+     * in the usage log repository.
+     *
+     * @throws IOException if an error occurs while retrieving the stories
+     */
+    @Test
+    void shouldLogLongTitlesFilterUsage() throws IOException {
+        when(scraper.scrapeTopEntries()).thenReturn(List.of());
+
+        service.getLongTitleEntries();
+
+        verify(usageLogRepository).save(
+                argThat(log -> log.getFilterApplied() == FilterType.LONG_TITLES));
+    }
+
+    /**
+     * Verifies that requesting short-title entries records the SHORT_TITLES filter
+     * in the usage log repository.
+     *
+     * @throws IOException if an error occurs while retrieving the stories
+     */
+    @Test
+    void shouldLogShortTitlesFilterUsage() throws IOException {
+        when(scraper.scrapeTopEntries()).thenReturn(List.of());
+
+        service.getShortTitleEntries();
+
+        verify(usageLogRepository).save(
+                argThat(log -> log.getFilterApplied() == FilterType.SHORT_TITLES));
     }
 }
