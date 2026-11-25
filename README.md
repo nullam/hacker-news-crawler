@@ -213,7 +213,7 @@ Through Swagger UI, you can:
 
 ## Database Usage Logs
 
-Every successful invocation of a filtering service method saves a usage record in the `usage_logs` table.
+Every request to a filtering service method is recorded in PostgreSQL, including its timestamp and applied filter.
 
 To inspect the records, execute:
 
