@@ -1,6 +1,7 @@
 package com.ely.hackernews.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.io.IOException;
@@ -106,5 +107,97 @@ public class HackerNewsServiceTest {
 
         verify(usageLogRepository).save(
                 argThat(log -> log.getFilterApplied() == FilterType.SHORT_TITLES));
+    }
+
+    /**
+     * Verifies that a title containing exactly five words
+     * is included in the short-title filter.
+     */
+    @Test
+    void shouldIncludeTitlesWithExactlyFiveWordsInShortFilter() {
+        List<HackerNewsEntry> entries = List.of(
+                new HackerNewsEntry(1, "One two three four five", 100, 20));
+
+        List<HackerNewsEntry> result = service.filterShortTitlesByPoints(entries);
+
+        assertEquals(1, result.size());
+        assertEquals("One two three four five", result.get(0).title());
+    }
+
+    /**
+     * Verifies that a title containing six words
+     * is included in the long-title filter.
+     */
+    @Test
+    void shouldIncludeTitlesWithSixWordsInLongFilter() {
+        List<HackerNewsEntry> entries = List.of(
+                new HackerNewsEntry(1, "One two three four five six", 100, 20));
+
+        List<HackerNewsEntry> result = service.filterLongTitlesByComments(entries);
+
+        assertEquals(1, result.size());
+        assertEquals("One two three four five six", result.get(0).title());
+    }
+
+    /**
+     * Verifies that isolated symbols are excluded when counting words.
+     */
+    @Test
+    void shouldExcludeSymbolsWhenCountingWords() {
+        List<HackerNewsEntry> entries = List.of(
+                new HackerNewsEntry(1, "This is - a self-explained example", 100, 20));
+
+        List<HackerNewsEntry> result = service.filterShortTitlesByPoints(entries);
+
+        assertEquals(1, result.size());
+    }
+
+    /**
+     * Verifies that titles containing only symbols are not considered long titles.
+     */
+    @Test
+    void shouldExcludeTitlesContainingOnlySymbolsFromLongFilter() {
+        List<HackerNewsEntry> entries = List.of(
+                new HackerNewsEntry(1, "!!! @@@ ###", 100, 20));
+
+        List<HackerNewsEntry> result = service.filterLongTitlesByComments(entries);
+
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Verifies that long-title entries are sorted by comments
+     * in descending order.
+     */
+    @Test
+    void shouldSortLongTitlesByCommentsDescending() {
+        List<HackerNewsEntry> entries = List.of(
+                new HackerNewsEntry(1, "One two three four five six", 100, 10),
+                new HackerNewsEntry(2, "Another long title with six words", 80, 50),
+                new HackerNewsEntry(3, "This is also a very long title", 120, 30));
+
+        List<HackerNewsEntry> result = service.filterLongTitlesByComments(entries);
+
+        assertEquals(50, result.get(0).comments());
+        assertEquals(30, result.get(1).comments());
+        assertEquals(10, result.get(2).comments());
+    }
+
+    /**
+     * Verifies that short-title entries are sorted by points
+     * in descending order.
+     */
+    @Test
+    void shouldSortShortTitlesByPointsDescending() {
+        List<HackerNewsEntry> entries = List.of(
+                new HackerNewsEntry(1, "Java Spring", 50, 10),
+                new HackerNewsEntry(2, "Learn Java", 150, 20),
+                new HackerNewsEntry(3, "Spring Boot", 100, 30));
+
+        List<HackerNewsEntry> result = service.filterShortTitlesByPoints(entries);
+
+        assertEquals(150, result.get(0).points());
+        assertEquals(100, result.get(1).points());
+        assertEquals(50, result.get(2).points());
     }
 }
