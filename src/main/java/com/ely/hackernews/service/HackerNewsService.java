@@ -7,15 +7,21 @@ import org.springframework.stereotype.Service;
 
 import com.ely.hackernews.model.HackerNewsEntry;
 import com.ely.hackernews.scraper.HackerNewsScraper;
+import com.ely.hackernews.entity.FilterType;
+import com.ely.hackernews.entity.UsageLog;
+import com.ely.hackernews.repository.UsageLogRepository;
+
 import java.io.IOException;
 
 @Service
 public class HackerNewsService {
 
         private final HackerNewsScraper scraper;
+        private final UsageLogRepository usageLogRepository;
 
-        public HackerNewsService(HackerNewsScraper scraper) {
+        public HackerNewsService(HackerNewsScraper scraper, UsageLogRepository usageLogRepository) {
                 this.scraper = scraper;
+                this.usageLogRepository = usageLogRepository;
         }
 
         /**
@@ -76,6 +82,7 @@ public class HackerNewsService {
          * @throws IOException if the homepage cannot be retrieved.
          */
         public List<HackerNewsEntry> getLongTitleEntries() throws IOException {
+                usageLogRepository.save(new UsageLog(FilterType.LONG_TITLES));
                 return filterLongTitlesByComments(scraper.scrapeTopEntries());
         }
 
@@ -86,6 +93,7 @@ public class HackerNewsService {
          * @throws IOException if the homepage cannot be retrieved.
          */
         public List<HackerNewsEntry> getShortTitleEntries() throws IOException {
+                usageLogRepository.save(new UsageLog(FilterType.SHORT_TITLES));
                 return filterShortTitlesByPoints(scraper.scrapeTopEntries());
         }
 }

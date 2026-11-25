@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.ely.hackernews.model.HackerNewsEntry;
+import com.ely.hackernews.repository.UsageLogRepository;
 import com.ely.hackernews.scraper.HackerNewsScraper;
 
 public class HackerNewsServiceTest {
@@ -19,10 +20,12 @@ public class HackerNewsServiceTest {
 
     private HackerNewsService service;
 
+    private UsageLogRepository usageLogRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new HackerNewsService(scraper);
+        service = new HackerNewsService(scraper, usageLogRepository);
     }
 
     /**
