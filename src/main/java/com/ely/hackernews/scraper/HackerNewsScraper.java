@@ -21,7 +21,7 @@ public class HackerNewsScraper {
     }
 
     /**
-     * Extracts the first 30 Hacker News entries from the homepage.
+     * Retrieves the Hacker News homepage and extracts its first 30 entries.
      *
      * @return a list containing the extracted Hacker News entries.
      * @throws IOException if the homepage cannot be retrieved.
@@ -29,6 +29,17 @@ public class HackerNewsScraper {
     public List<HackerNewsEntry> scrapeTopEntries() throws IOException {
 
         Document document = fetchPage();
+
+        return parseEntries(document);
+    }
+
+    /**
+     * Extracts the first 30 Hacker News entries from an HTML document.
+     *
+     * @param document the HTML document to process.
+     * @return a list containing the extracted Hacker News entries.
+     */
+    List<HackerNewsEntry> parseEntries(Document document) {
 
         Elements storyRows = document.select("tr.athing");
 
@@ -46,7 +57,6 @@ public class HackerNewsScraper {
             }
 
             String title = titleLink.text();
-
             String rankText = storyRow.select(".rank").text();
 
             Element scoreElement = metadataRow.selectFirst(".score");
